@@ -1,0 +1,140 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+typedef struct virus{
+	unsigned short sigSize;
+	unsigned char* sig;
+	char virusName[16];
+}virus;
+
+typedef struct link link;
+
+struct link{
+	link *nextVirus;
+	virus *vir;
+};
+
+void printHex(unsigned char *buffer, int length, FILE *output){
+	for(int i = 0; i<length; i++){
+		fprintf(output, "%02X ",buffer[i]);
+	}
+}
+
+void readVirus(virus* vir, FILE* input){
+	if(fread(&vir->sigSize, 1, sizeof(unsigned short), input) < sizeof(unsigned short)){
+		vir=NULL;
+		return;
+	}
+
+	vir->sig = (unsigned char *)malloc(vir->sigSize*(sizeof(unsigned char)));
+	if(fread(vir->sig, 1, vir->sigSize, input) < vir->sigSize){
+		free(vir->sig);
+		vir=NULL;
+		return;
+	}	
+
+	if(fread(vir->virusName, 1, 16, input) < 16){
+		vir=NULL;
+		return;
+	}
+}
+
+
+void printVirus(virus* vir, FILE* output){
+	fprintf(output, "Virus name: %s", vir->virusName);
+
+	fprintf(output, "\nVirus size: %d", vir->sigSize);
+
+	fprintf(output, "\nsignature: \n");
+	printHex(vir->sig, vir->sigSize, output);
+	fprintf(output,"\n\n");
+}
+
+void list_print(link *virus_list, FILE *output){
+	link *temp = virus_list;
+	while(temp != NULL){	
+		if(temp->vir!=NULL && temp->vir->sig!=NULL) {
+			printVirus(temp->vir, output);
+		}
+		temp = temp->nextVirus;
+	}
+}
+
+link *list_append_as_first(link *virus_list, link *to_add){//add as first
+	to_add->nextVirus = virus_list;
+	return to_add;
+}
+
+link *list_append_at_end(link *virus_list, link *to_add){//add at end
+	link *temp = virus_list;
+	if(virus_list == NULL){
+		return to_add;
+	}
+	while(temp->nextVirus != NULL){
+		temp = temp->nextVirus;
+	}
+	temp->nextVirus = to_add;
+	return virus_list;
+}
+
+void list_free(link *virus_list){
+	free(virus_list);
+}
+
+link *loadSignatures(link *list, FILE *input){	
+	while(!feof(input)){
+		virus *next_virus = (virus *)malloc(sizeof(virus));
+		readVirus(next_virus, input);
+		if(next_virus->sig!=NULL){
+			link *to_add = (link *)malloc(sizeof(input));
+			to_add->vir = next_virus;
+			to_add->nextVirus = NULL;		
+			list = list_append_as_first(list, to_add);
+		}
+	}
+	return list;
+}
+
+void printSignatures(link *list, FILE* output){
+	if(list != NULL){
+		list_print(list, output);
+	}
+}
+
+int main(int argc, char **argv){
+	FILE *input;
+	FILE *output = fopen("output.txt", "w");
+	link *virus_list = NULL;
+	int option;
+	while(1){
+		printf("\nPlease choose a function:\n");
+		char num[20];
+		fgets(num, 20, stdin);
+		sscanf(num, "%d", &option);
+		if(option == 1){
+			printf("Please enter a signature file name:\n");
+			char *name = (char *)malloc((20)*sizeof(char));
+			char buffer[20];
+			fgets(buffer, 20, stdin);
+			sscanf(buffer, "%s", name);
+			input = fopen(name, "r");
+			virus_list = NULL;
+			virus_list = loadSignatures(virus_list, input);
+			free(name);
+			fclose(input);
+		}
+		else if(option == 2){
+			printSignatures(virus_list, output);
+			fclose(output);			
+		}
+		else if (option == 3){
+			exit(0);
+		}
+		else{
+			printf("Not within bounds\n");
+		}
+	}	
+	list_free(virus_list);
+	return 0;
+}
