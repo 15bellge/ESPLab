@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
             perror("child1>redirecting stdout to the write-end of the pipe..");
         }
         close(STDOUT);//close stdout
-        int write_descriptor = dup(file_descriptors[1]);//duplicate write-end
-        close(write_descriptor);
+        dup(file_descriptors[1]);//duplicate write-end
+        close(file_descriptors[1]);
         char *command = "ls -l";
         if (debug_mode) {
             fprintf(stderr, "child1>going to execute cmd: %s\n", command);
@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
                 perror("child2>redirecting stdin to the read-end of the pipe...");
             }
             close(STDIN);//close stdin
-            int read_descriptor = dup(file_descriptors[0]);//duplicate read-end
-            close(read_descriptor);
+            dup(file_descriptors[0]);//duplicate read-end
+            close(file_descriptors[0]);
             char *command = "tail -n 2";
             if (debug_mode) {
                 fprintf(stderr, "child2>going to execute cmd: %s\n", command);
@@ -85,13 +85,8 @@ int main(int argc, char *argv[]) {
             if (debug_mode) {
                 perror("parent_process>waiting for child processes to terminate...");
             }
-            //int status;
-            //int pid_returned = wait(&status);
             wait(NULL);
             wait(NULL);
-            //printf("status1: %d, pid_returned1: %d", status, pid_returned);
-            //pid_returned=wait(&status);
-            //printf("status2: %d, pid_returned2: %d", status, pid_returned);
             if (debug_mode) {
                 perror("parent_process>exiting...");
             }
@@ -100,3 +95,4 @@ int main(int argc, char *argv[]) {
     }
     return 0;
 }
+
