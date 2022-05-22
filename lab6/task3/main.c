@@ -27,16 +27,9 @@ typedef struct process {
     int status; //status of the process: RUNNING/SUSPENDED/TERMINATED
     int end;
     struct process *next; //next process in chain
-
 } process;
 
-//typedef struct command {
-//    char name[MAX_SIZE];//name of command
-//    struct command *next;//next command
-//} command;
-
 process *process_list = NULL;
-//command command_list = NULL;
 int input_file, output_file;
 int **pipes;
 
