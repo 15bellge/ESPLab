@@ -238,11 +238,13 @@ void pipeline_execution(int debug_mode, cmdLine *cmd, char *command) {
                 close(left_pipe[0]);
                 close(left_pipe[1]);
             }
+            addProcess(&process_list, cmd, pid);
         }
         cmd = cmd->next;
     }
     close(left_pipe[0]);
     close(left_pipe[1]);
+    releasePipes(pipes, number_of_commands - 1);
 }
 
 int main(int argc, char *argv[]) {
@@ -262,6 +264,7 @@ int main(int argc, char *argv[]) {
         fgets(command, MAX_SIZE, stdin); // enter command
         cmdLine *cmdLine = parseCmdLines(command);
         if (strcmp(cmdLine->arguments[0], "quit") == 0) {
+            freeProcessList(process_list);
             _exit(3);
         } else if (strncmp(cmdLine->arguments[0], "cd", 2) == 0) {
             handle_cd(debug_mode, command);
