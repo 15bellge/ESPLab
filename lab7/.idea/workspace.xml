@@ -35,11 +35,18 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/home/bella/Documents/GitHub/ESPLab/lab7",
+    "last_opened_file_path": "/home/bella/Documents/GitHub/ESPLab/lab7/task3",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "vcs.Git"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/task3" />
+      <recent name="$PROJECT_DIR$/task2" />
+      <recent name="$PROJECT_DIR$/task1" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -50,6 +57,7 @@
       <updated>1654034432095</updated>
       <workItem from="1654034433690" duration="3145000" />
       <workItem from="1654037606078" duration="419000" />
+      <workItem from="1654040006013" duration="5966000" />
     </task>
     <servers />
   </component>

@@ -4,7 +4,7 @@ BEGIN { FS = " "
         counter = 0
       }
       {
-        if(/English/)
+        if($3 == "English")
             counter++
       }
 END   { print "Count = " counter }
