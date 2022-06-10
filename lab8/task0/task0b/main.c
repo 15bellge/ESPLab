@@ -3,59 +3,62 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 #include <elf.h>
 #include <fcntl.h>
-#include "unistd.h"
-#include <stdint.h>
-
+#include <unistd.h>
 
 struct fun_desc {
     char *name;
+
     void (*fun)();
 };
 
 bool debug_mode = false;
 int curr_file = -1;
-Elf32_Ehdr* elf_file;
+Elf32_Ehdr *elf_file;
+struct stat fd;
+void *map;
 
-void toggle_debug_mode(){
-    if (debug_mode){
+void toggle_debug_mode() {
+    if (debug_mode) {
         debug_mode = false;
-        printf("%s","Debug flag now off\n");
-    }
-    else{
+        printf("%s", "Debug flag now off\n");
+    } else {
         debug_mode = true;
-        printf("%s","Debug flag now on\n");
+        printf("%s", "Debug flag now on\n");
     }
 }
 
-void examine_ELF_file(){
-    printf("%s","please enter file name : ");
+void examine_ELF_file() {
     char file_name[100];
-    fgets(file_name,100, stdin);
-    file_name[strlen(file_name)-1]='\0';
-    if(curr_file!=-1){
-        printf("in current filr = -1 %d", curr_file );
+    char file[100];
+    printf("please enter file name : ");
+    fgets(file, 99, stdin);
+    file[strlen(file) - 1] = '\0';
+    strncpy(file_name, file, 100);
+    if (curr_file != -1) {
+        printf("in current file = -1 %d", curr_file);
         close(curr_file);
     }
-    curr_file = open(file_name,O_RDONLY );
-    void* map = mmap(NULL, sizeof (Elf32_Ehdr), PROT_READ , MAP_SHARED, curr_file, 0);
-    elf_file = (Elf32_Ehdr *)(map);
-    printf("magic 1 2 3 : %c %c %c\n", elf_file->e_ident[1], elf_file->e_ident[2], elf_file->e_ident[3]);
-    if(elf_file->e_ident[1] != 'E' || elf_file->e_ident[2] != 'L' || elf_file->e_ident[3] != 'F'){
+    curr_file = open(file_name, O_RDONLY);
+    fstat(curr_file, &fd);
+    map = mmap(NULL, fd.st_size, PROT_READ, MAP_SHARED, curr_file, 0);
+    elf_file = (Elf32_Ehdr *) map;
+    printf("magic 1 2 3 : %c %c %c\n", elf_file->e_ident[EI_MAG1], elf_file->e_ident[EI_MAG2],
+           elf_file->e_ident[EI_MAG3]);
+    if (elf_file->e_ident[EI_MAG1] != 'E' || elf_file->e_ident[EI_MAG2] != 'L' || elf_file->e_ident[EI_MAG3] != 'F') {
         printf("file is not ELF type");
+        munmap(map, fd.st_size);
         close(curr_file);
         curr_file = -1;
         return;
     }
-
-    if(elf_file->e_ident[EI_DATA] == 1){
+    if (elf_file->e_ident[EI_DATA] == 1) {
         printf("data encoding scheme : 2's complement, little endian\n");
-    }
-    else if(elf_file->e_ident[EI_DATA] == 2){
+    } else if (elf_file->e_ident[EI_DATA] == 2) {
         printf("data encoding scheme : 2's complement, big endian\n");
-    }
-    else{
+    } else {
         printf("data encoding scheme : Invalid data encoding\n");
     }
     printf("entry point : %d\n", elf_file->e_entry);
@@ -77,7 +80,7 @@ void print_symbols(){
 
 
 void quit(){
-    printf(" -DONE- ");
+    printf(" -DONE- \n");
     exit(0);
 }
 

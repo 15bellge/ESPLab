@@ -95,7 +95,7 @@ void print_symbols() {
 }
 
 void quit() {
-    printf(" -DONE- ");
+    printf(" -DONE- \n");
     exit(0);
 }
 
