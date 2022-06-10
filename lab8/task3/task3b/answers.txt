@@ -1,0 +1,2 @@
+lea    ecx,[esp+0x4]
+and    esp,0xfffffff0

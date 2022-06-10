@@ -1,0 +1,6 @@
+1. 0x80482e0
+2. 34
+3. 1b8 = 440
+4. Yes, in 80482e0
+5. Yes, in 08048388
+6. in text because it starts in 080482e0 and ends in 08048498

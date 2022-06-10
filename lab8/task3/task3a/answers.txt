@@ -1,0 +1,17 @@
+//all the numbers are in hex
+1. write "readelf -s abc"
+2. search "main"
+3. note that:
+    (1) function's size is 136 in
+    (2) function's virtual address is 770
+    (3) function's section number is 14
+4. write "readelf -S abc"
+5. find section number 14, note that it's .text
+6. note that:
+    (1) section's entry is 520
+    (2) section's offset is 520
+7. calculate offset of function: 770-520=250 from beginning of .text
+8. write "hexedit abc"
+9. find beginning of function at 770
+10. calculate end of function: 770+136=8A6
+11. found the function at 770 through 8A6
