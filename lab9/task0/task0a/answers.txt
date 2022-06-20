@@ -1,0 +1,4 @@
+1. address: 0x8048294, value: 186
+2.
+3. start: 08048080
+4. ELFexec1
